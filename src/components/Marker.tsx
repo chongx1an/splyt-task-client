@@ -10,7 +10,7 @@ class Marker extends React.Component<Props> {
 
     render() {
         return (
-            <img src={this.props.imageSrc} alt="" />
+            <img src="https://pbs.twimg.com/profile_images/841672289460592641/uuwofC-5.jpg" style={{ height: "20px" }}></img>
         );
     }
 }
