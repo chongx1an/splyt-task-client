@@ -12,7 +12,7 @@ interface Props {
     setMapZoom: Function
 };
 
-interface ListDriversResponse {
+interface ApiSuccessResponse {
     pickup_eta: number,
     drivers: Driver[]
 }
@@ -20,10 +20,13 @@ interface ListDriversResponse {
 const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrentOrigin, setMapZoom }) => {
 
     const [numOfDriver, setNumOfDriver] = React.useState<Number>(10);
+    const [errorMessage, setErrorMessage] = React.useState<String>();
 
     const search = async () => {
 
         if (!currentOrigin) return;
+
+        if (errorMessage) setErrorMessage("");
 
         const query = new URLSearchParams({
             latitude: `${currentOrigin.latitude}`,
@@ -31,7 +34,13 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
             count: `${numOfDriver}`
         })
 
-        const response = await axios.get<ListDriversResponse>(`${process.env.REACT_APP_API_URL}/drivers?${query.toString()}`);
+        try {
+            const response = await axios.get<ApiSuccessResponse>(`${process.env.REACT_APP_API_URL}/drivers?${query.toString()}`);
+            setDrivers(response.data.drivers);
+        } catch (error) {
+            setErrorMessage("Something went wrong, please try again later.")
+        }
+
 
         setCurrentOrigin({
             icon: "",
@@ -44,8 +53,6 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
 
         setMapZoom(13.9)
         setMapZoom(14)
-
-        setDrivers(response.data.drivers);
 
     }
 
@@ -78,6 +85,17 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
             </div>
 
             <button className="mt-20 px-10 py-3 bg-gray-100 rounded m-2 w-full hover:bg-gray-200" onClick={search}>Search</button>
+
+            {
+                errorMessage &&
+                <div
+                    className="absolute top-0 z-10 mt-5 px-5 py-3 bg-red-100 rounded m-2 text-red-500 flex justify-between">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p className="text-sm">{errorMessage}</p>
+                </div>
+            }
         </div>
 
     );
