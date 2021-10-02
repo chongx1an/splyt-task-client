@@ -10,7 +10,9 @@ interface Props {
 
 const Marker: React.FC<Props> = ({ src, size = 10, bearing = 0 }) => {
     return (
-        <img className={`w-${size} h-${size} rounded`} style={{ transform: `rotate(${bearing}deg)` }} src={src} alt=""></img>
+        <div className="filter drop-shadow-sm">
+            <img className={`filter drop-shadow-sm w-${size} h-${size} rounded`} style={{ transform: `rotate(${bearing}deg)` }} src={src} alt=""></img>
+        </div>
     );
 }
 

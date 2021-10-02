@@ -28,36 +28,38 @@ const App: React.FC = () => {
   const [drivers, setDrivers] = React.useState<Driver[]>([]);
   const [mapZoom, setMapZoom] = React.useState<number>(14);
 
+  const getNearestOrigin = (): Origin => {
 
-  React.useEffect(() => {
+    let nearest: Origin = origins[0];
 
     navigator.geolocation.getCurrentPosition(function (position) {
 
-      const nearestOrigin = findNearestOrigin(position.coords);
+      let shortest: number = Number.MAX_SAFE_INTEGER;
 
-      setCurrentOrigin(nearestOrigin);
+      origins.forEach(origin => {
 
+        const distance = getDistance(position.coords, origin)
+
+        if (distance < shortest) {
+          shortest = distance;
+          nearest = origin;
+        }
+
+      })
     });
-  }, []);
-
-  const findNearestOrigin = (coords: { latitude: number, longitude: number }): Origin => {
-
-    let shortest: number = Number.MAX_SAFE_INTEGER;
-    let nearest: Origin = origins[0];
-
-    origins.forEach(origin => {
-
-      const distance = getDistance(coords, origin)
-
-      if (distance < shortest) {
-        shortest = distance;
-        nearest = origin;
-      }
-
-    })
 
     return nearest;
+
   }
+
+
+  React.useEffect(() => {
+
+    const nearest: Origin = getNearestOrigin();
+    setCurrentOrigin(nearest);
+
+  }, []);
+
 
   return (
     <div className="w-screen h-screen flex items-center">
@@ -69,6 +71,7 @@ const App: React.FC = () => {
           setDrivers={setDrivers}
           setCurrentOrigin={setCurrentOrigin}
           setMapZoom={setMapZoom}
+          getNearestOrigin={getNearestOrigin}
         ></Panel >
       </div >
 
@@ -80,11 +83,6 @@ const App: React.FC = () => {
             center={{ lat: currentOrigin.latitude, lng: currentOrigin.longitude }}
             zoom={mapZoom}
           >
-            <Marker
-              lat={currentOrigin.latitude}
-              lng={currentOrigin.longitude}
-              src={require("./assets/office.png").default}
-            ></Marker>
             {
               drivers.map(driver => {
                 return (
@@ -98,6 +96,11 @@ const App: React.FC = () => {
                   </Marker>);
               })
             }
+            <Marker
+              lat={currentOrigin.latitude}
+              lng={currentOrigin.longitude}
+              src={require("./assets/office.png").default}
+            ></Marker>
           </GoogleMapReact>
         }
       </div>
