@@ -1,5 +1,4 @@
 import * as React from "react";
-import { transform } from "typescript";
 
 interface Props {
     src: string;
@@ -9,7 +8,7 @@ interface Props {
     bearing?: number;
 };
 
-const Marker: React.FC<Props> = ({ src, lat, lng, size = 10, bearing = 0 }) => {
+const Marker: React.FC<Props> = ({ src, size = 10, bearing = 0 }) => {
     return (
         <img className={`w-${size} h-${size} rounded`} style={{ transform: `rotate(${bearing}deg)` }} src={src} alt=""></img>
     );

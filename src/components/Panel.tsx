@@ -71,9 +71,9 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
                     max={20}
                     min={5}
                     defaultValue={10}
-                    onAfterChange={(value, index) => setNumOfDriver(value)}
+                    onAfterChange={(value) => setNumOfDriver(value)}
                     renderThumb={(props, state) => <div {...props} className="bg-black h-6 w-6 rounded-md text-white font-bold text-sm flex items-center justify-center cursor-pointer">{state.value}</div>}
-                    renderTrack={(props, state) => <div {...props} className="bg-gray-100 h-2 transform translate-y-2 rounded-xl"></div>}
+                    renderTrack={(props) => <div {...props} className="bg-gray-100 h-2 transform translate-y-2 rounded-xl"></div>}
                 />
             </div>
 
