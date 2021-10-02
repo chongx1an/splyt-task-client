@@ -1,18 +1,18 @@
 import * as React from "react";
+import { transform } from "typescript";
 
 interface Props {
-    imageSrc: string;
+    src: string;
     lat: number;
     lng: number;
+    size?: number;
+    bearing?: number;
 };
 
-class Marker extends React.Component<Props> {
-
-    render() {
-        return (
-            <img src="https://pbs.twimg.com/profile_images/841672289460592641/uuwofC-5.jpg" style={{ height: "20px" }}></img>
-        );
-    }
+const Marker: React.FC<Props> = ({ src, lat, lng, size = 10, bearing = 0 }) => {
+    return (
+        <img className={`w-${size} h-${size} rounded`} style={{ transform: `rotate(${bearing}deg)` }} src={src}></img>
+    );
 }
 
 export default Marker;

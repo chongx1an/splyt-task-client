@@ -4,12 +4,29 @@ import GoogleMapReact from 'google-map-react';
 import Marker from './components/Marker';
 import { getDistance } from 'geolib'
 import ReactSlider from 'react-slider'
+import axios from 'axios';
 
 interface Origin {
   icon: string;
   name: string;
   latitude: number;
   longitude: number;
+}
+
+interface Coordinate {
+  latitude: number,
+  longitude: number,
+  bearing: number,
+}
+
+interface Driver {
+  driver_id: string,
+  location: Coordinate
+}
+
+interface ListDriversResponse {
+  pickup_eta: number,
+  drivers: Driver[]
 }
 
 const App: React.FC = () => {
@@ -29,11 +46,12 @@ const App: React.FC = () => {
     }
   ];
 
-  const [currentOrigin, setCurrentOrigin] = React.useState<Origin | null>()
+  const [currentOrigin, setCurrentOrigin] = React.useState<Origin>(origins[0]);
+  const [numOfDriver, setNumOfDriver] = React.useState<Number>(10);
+  const [drivers, setDrivers] = React.useState<Driver[]>([]);
 
   React.useEffect(() => {
 
-    console.log(process.env.REACT_APP_GOOGLE_MAP_KEY)
     navigator.geolocation.getCurrentPosition(function (position) {
 
       console.log("Latitude is :", position.coords.latitude);
@@ -43,10 +61,11 @@ const App: React.FC = () => {
 
       setCurrentOrigin(nearestOrigin);
 
+      search();
     });
   }, []);
 
-  function findNearestOrigin(coords: { latitude: number, longitude: number }): Origin {
+  const findNearestOrigin = (coords: { latitude: number, longitude: number }): Origin => {
 
     let shortest: number = Number.MAX_SAFE_INTEGER;
     let nearest: Origin = origins[0];
@@ -65,7 +84,20 @@ const App: React.FC = () => {
     return nearest;
   }
 
-  function search() {
+  const search = async () => {
+
+
+    if (!currentOrigin) return;
+
+    const query = new URLSearchParams({
+      latitude: `${currentOrigin.latitude}`,
+      longitude: `${currentOrigin.longitude}`,
+      count: `${numOfDriver}`
+    })
+
+    const response = await axios.get<ListDriversResponse>(`${process.env.REACT_APP_API_URL}/drivers?${query.toString()}`);
+
+    setDrivers(response.data.drivers);
 
   }
 
@@ -88,6 +120,7 @@ const App: React.FC = () => {
               max={20}
               min={5}
               defaultValue={10}
+              onAfterChange={(value, index) => setNumOfDriver(value)}
               renderThumb={(props, state) => <div {...props} className="bg-black h-6 w-6 rounded-md text-white font-bold text-sm flex items-center justify-center cursor-pointer">{state.value}</div>}
               renderTrack={(props, state) => <div {...props} className="bg-gray-100 h-2 transform translate-y-2 rounded-xl"></div>}
             />
@@ -104,9 +137,26 @@ const App: React.FC = () => {
             bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAP_KEY }}
             defaultCenter={{ lat: currentOrigin.latitude, lng: currentOrigin.longitude }}
             center={{ lat: currentOrigin.latitude, lng: currentOrigin.longitude }}
-            defaultZoom={12}
+            defaultZoom={14}
           >
-            <Marker lat={currentOrigin.latitude} lng={currentOrigin.longitude} imageSrc=""></Marker>
+            <Marker
+              lat={currentOrigin.latitude}
+              lng={currentOrigin.longitude}
+              src={require("./assets/office.png").default}
+            ></Marker>
+            {
+              drivers.map(driver => {
+                return (
+                  <Marker
+                    key={driver.driver_id}
+                    lat={driver.location.latitude}
+                    lng={driver.location.longitude}
+                    src={require("./assets/car.png").default}
+                    size={20}
+                    bearing={driver.location.bearing}>
+                  </Marker>);
+              })
+            }
           </GoogleMapReact>
         }
 
