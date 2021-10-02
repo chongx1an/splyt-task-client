@@ -6,6 +6,7 @@ import { getDistance } from 'geolib'
 import Origin from './interfaces/origin.interface';
 import Driver from './interfaces/driver.interface';
 import Panel from './components/Panel';
+import MapStyle from "./MapStyle.json";
 
 const App: React.FC = () => {
 
@@ -64,6 +65,7 @@ const App: React.FC = () => {
   return (
     <div className="w-screen h-screen flex items-center">
 
+
       <div className="flex-grow h-screen flex justify-center items-center">
         <Panel
           origins={origins}
@@ -79,6 +81,7 @@ const App: React.FC = () => {
         {
           currentOrigin && process.env.REACT_APP_GOOGLE_MAP_KEY &&
           <GoogleMapReact
+            options={{ styles: MapStyle }}
             bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAP_KEY }}
             center={{ lat: currentOrigin.latitude, lng: currentOrigin.longitude }}
             zoom={mapZoom}
