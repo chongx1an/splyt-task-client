@@ -34,8 +34,7 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
 
     if (!currentOrigin) return
 
-    if (errorMessage) setErrorMessage("")
-
+    setErrorMessage("")
     setIsSearched(true)
 
     const query = new URLSearchParams({
@@ -66,13 +65,10 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
 
   }
 
-  React.useEffect(() => {
+  useInterval(() => {
+    if (isSearched) search()
+  }, 15000) // 15s
 
-    useInterval(() => {
-      if (isSearched) search()
-    }, 10000) // 10s
-
-  }, [])
 
   return (
     <div className="mx-10">
