@@ -3,11 +3,17 @@ This React project will search taxis based on origin location and display those 
 
 ## Setup instruction
 
-Installation:\
+1. Installation:\
 `npm install`
 
-Start the project:\
+2. Create a .env file:\
+You can copy content of the `.env.example` file into `.env` file and change the credentials
+
+3. Start the project:\
 `npm run start`
+
+4. Project are default running at port 3000\
+http://localhost:3000/
 
 
 
