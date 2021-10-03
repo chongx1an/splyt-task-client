@@ -1,42 +1,42 @@
-import axios from "axios";
-import * as React from "react";
-import ReactSlider from "react-slider";
-import useInterval from "../hooks/useInterval";
-import Driver from "../interfaces/driver.interface";
-import Origin from "../interfaces/origin.interface";
-import "./Panel.css";
+import axios from "axios"
+import * as React from "react"
+import ReactSlider from "react-slider"
+import useInterval from "../hooks/useInterval"
+import Driver from "../interfaces/driver.interface"
+import Origin from "../interfaces/origin.interface"
+import "./Panel.css"
 interface Props {
   origins: Origin[]
-  currentOrigin: Origin,
-  setDrivers: Function,
-  setCurrentOrigin: Function,
-  setMapZoom: Function,
+  currentOrigin: Origin
+  setDrivers: Function
+  setCurrentOrigin: Function
+  setMapZoom: Function
   getNearestOrigin: Function
-};
+}
 
 interface ApiSuccessResponse {
-  pickup_eta: number,
+  pickup_eta: number
   drivers: Driver[]
 }
 
 const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrentOrigin, setMapZoom, getNearestOrigin }) => {
 
-  const [numOfDriver, setNumOfDriver] = React.useState<number>(10);
-  const [errorMessage, setErrorMessage] = React.useState<String>();
-  const [isSearched, setIsSearched] = React.useState<boolean>(false);
+  const [numOfDriver, setNumOfDriver] = React.useState<number>(10)
+  const [errorMessage, setErrorMessage] = React.useState<String>()
+  const [isSearched, setIsSearched] = React.useState<boolean>(false)
 
   const relocateToNearest = () => {
-    const nearest: Origin = getNearestOrigin();
-    setCurrentOrigin(nearest);
+    const nearest: Origin = getNearestOrigin()
+    setCurrentOrigin(nearest)
   }
 
   const search = async () => {
 
-    if (!currentOrigin) return;
+    if (!currentOrigin) return
 
-    if (errorMessage) setErrorMessage("");
+    if (errorMessage) setErrorMessage("")
 
-    setIsSearched(true);
+    setIsSearched(true)
 
     const query = new URLSearchParams({
       latitude: `${currentOrigin.latitude}`,
@@ -45,8 +45,8 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
     })
 
     try {
-      const response = await axios.get<ApiSuccessResponse>(`${process.env.REACT_APP_API_URL}/drivers?${query.toString()}`);
-      setDrivers(response.data.drivers);
+      const response = await axios.get<ApiSuccessResponse>(`${process.env.REACT_APP_API_URL}/drivers?${query.toString()}`)
+      setDrivers(response.data.drivers)
     } catch (error) {
       setErrorMessage("Something went wrong, please try again later.")
     }
@@ -57,18 +57,22 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
       name: "",
       latitude: currentOrigin.latitude - 0.00001,
       longitude: currentOrigin.longitude - 0.00001,
-    });
+    })
 
-    setCurrentOrigin(currentOrigin);
+    setCurrentOrigin(currentOrigin)
 
     setMapZoom(13.9)
     setMapZoom(14)
 
   }
 
-  useInterval(() => {
-    if (isSearched) search();
-  }, 10000) // 10s
+  React.useEffect(() => {
+
+    useInterval(() => {
+      if (isSearched) search()
+    }, 10000) // 10s
+
+  }, [])
 
   return (
     <div className="mx-10">
@@ -82,7 +86,7 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
                 className={currentOrigin?.name === origin.name ? "px-10 py-3 bg-black text-white rounded my-2" : "px-10 py-3 bg-gray-100 rounded my-2 hover:bg-gray-200"}
                 onClick={() => setCurrentOrigin(origin)}>
                 {origin.icon} {origin.name}
-              </button>);
+              </button>)
           })
         }
       </div>
@@ -120,8 +124,8 @@ const Panel: React.FC<Props> = ({ origins, currentOrigin, setDrivers, setCurrent
       }
     </div>
 
-  );
+  )
 
 }
 
-export default Panel;
+export default Panel

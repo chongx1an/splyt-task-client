@@ -1,12 +1,12 @@
-import * as React from 'react';
-import './App.css';
-import GoogleMapReact from 'google-map-react';
-import Marker from './components/Marker';
+import * as React from 'react'
+import './App.css'
+import GoogleMapReact from 'google-map-react'
+import Marker from './components/Marker'
 import { getDistance } from 'geolib'
-import Origin from './interfaces/origin.interface';
-import Driver from './interfaces/driver.interface';
-import Panel from './components/Panel';
-import MapStyle from "./MapStyle.json";
+import Origin from './interfaces/origin.interface'
+import Driver from './interfaces/driver.interface'
+import Panel from './components/Panel'
+import MapStyle from "./MapStyle.json"
 
 const App: React.FC = () => {
 
@@ -23,43 +23,43 @@ const App: React.FC = () => {
       latitude: 51.5049375,
       longitude: -0.0964509
     }
-  ];
+  ]
 
-  const [currentOrigin, setCurrentOrigin] = React.useState<Origin>(origins[0]);
-  const [drivers, setDrivers] = React.useState<Driver[]>([]);
-  const [mapZoom, setMapZoom] = React.useState<number>(14);
+  const [currentOrigin, setCurrentOrigin] = React.useState<Origin>(origins[0])
+  const [drivers, setDrivers] = React.useState<Driver[]>([])
+  const [mapZoom, setMapZoom] = React.useState<number>(14)
 
   const getNearestOrigin = (): Origin => {
 
-    let nearest: Origin = origins[0];
+    let nearest: Origin = origins[0]
 
     navigator.geolocation.getCurrentPosition(function (position) {
 
-      let shortest: number = Number.MAX_SAFE_INTEGER;
+      let shortest: number = Number.MAX_SAFE_INTEGER
 
       origins.forEach(origin => {
 
         const distance = getDistance(position.coords, origin)
 
         if (distance < shortest) {
-          shortest = distance;
-          nearest = origin;
+          shortest = distance
+          nearest = origin
         }
 
       })
-    });
+    })
 
-    return nearest;
+    return nearest
 
   }
 
 
   React.useEffect(() => {
 
-    const nearest: Origin = getNearestOrigin();
-    setCurrentOrigin(nearest);
+    const nearest: Origin = getNearestOrigin()
+    setCurrentOrigin(nearest)
 
-  }, []);
+  }, [])
 
 
   return (
@@ -96,7 +96,7 @@ const App: React.FC = () => {
                     src={require("./assets/car.png").default}
                     size={20}
                     bearing={driver.location.bearing}>
-                  </Marker>);
+                  </Marker>)
               })
             }
             <Marker
@@ -110,8 +110,8 @@ const App: React.FC = () => {
 
     </div >
 
-  );
+  )
 
 }
 
-export default App;
+export default App
