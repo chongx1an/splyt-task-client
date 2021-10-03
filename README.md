@@ -1,7 +1,12 @@
 ## Introduction
 This React project will search taxis based on origin location and display those taxis as markers inside a map. The list of taxis is return from this [API project](https://github.com/chongx1an/splyt-task-api)
 
-## Start the project
+## Setup instruction
+
+Installation:\
+`npm install`
+
+Start the project:\
 `npm run start`
 
 ## Preview
