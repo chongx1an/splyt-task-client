@@ -1,5 +1,5 @@
 export default interface Coordinate {
-    latitude: number,
-    longitude: number,
-    bearing: number,
+  latitude: number,
+  longitude: number,
+  bearing: number,
 }
